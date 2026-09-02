@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LINE AI 客服 demo｜LUMEN 燈飾</title>
+<style>
+:root{--bg:#0d1220;--panel:#121a2e;--line:#26304a;--text:#e9edf6;--sub:#93a0bd;--acc:#7c6cff;--ok:#2fd08c;--warn:#ffb454}
+*{margin:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif}
+.wrap{max-width:1060px;margin:0 auto;padding:0 20px}
+header{padding:64px 0 26px;text-align:center}
+.kicker{color:var(--acc);font-weight:700;letter-spacing:.12em;font-size:13px}
+h1{font-size:clamp(26px,4.6vw,40px);margin:12px 0 8px}
+.lede{color:var(--sub);max-width:560px;margin:0 auto}
+.cols{display:grid;grid-template-columns:400px 1fr;gap:18px;margin:28px 0 60px}
+@media(max-width:860px){.cols{grid-template-columns:1fr}}
+.phone{background:var(--panel);border:1px solid var(--line);border-radius:22px;overflow:hidden}
+.phead{background:#0b143a;padding:14px 16px;display:flex;align-items:center;gap:10px}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px}
+.phead b{font-size:15px}
+.phead small{display:block;color:var(--sub);font-size:11px}
+.badge{margin-left:auto;font-size:11px;color:var(--ok);border:1px solid var(--ok);padding:2px 8px;border-radius:20px}
+.chat{height:430px;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--line-bg)}
+.msg{max-width:78%;padding:10px 13px;border-radius:14px;font-size:14px;line-height:1.55}
+.bot{align-self:flex-start;background:#182445;border:1px solid var(--line);border-bottom-left-radius:4px}
+.user{align-self:flex-end;background:var(--acc);color:#fff;border-bottom-right-radius:4px}
+.meta{font-size:10.5px;color:var(--sub);margin-top:5px}
+.meta b{color:var(--warn)}
+.quick{display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px}
+.quick button{background:#141d38;border:1px solid var(--line);color:var(--text);border-radius:20px;padding:8px 14px;font-size:13px;cursor:pointer;font-family:inherit}
+.quick button:hover{border-color:var(--acc)}
+.side h2{font-size:19px;margin-bottom:6px}
+.side .hint{color:var(--sub);font-size:13px;margin-bottom:14px}
+.pillrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.pill{font-size:12px;padding:5px 11px;border-radius:16px;background:#141d38;border:1px solid var(--line)}
+.pill.hit{background:rgba(47,208,140,.14);border-color:var(--ok);color:var(--ok)}
+.pill.human{background:rgba(255,180,84,.14);border-color:var(--warn);color:var(--warn)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{color:var(--sub);text-align:left;font-weight:600;padding:8px 8px;border-bottom:1px solid var(--line);font-size:12px}
+td{padding:9px 8px;border-bottom:1px solid #1c2540}
+.stat{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.stat div{background:#141d38;border:1px solid var(--line);border-radius:12px;padding:12px}
+.stat b{font-size:22px;display:block}
+.stat span{font-size:11px;color:var(--sub)}
+.typing{display:inline-flex;gap:4px;padding:12px 14px}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--sub);animation:bl 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes bl{0%,100%{opacity:.25}50%{opacity:1}}
+footer{border-top:1px solid var(--line);padding:26px 0 50px;text-align:center;color:var(--sub);font-size:12.5px}
+</style>
+</head>
+<body>
+<header class="wrap">
+  <div class="kicker">LINE AI CUSTOMER SERVICE</div>
+  <h1>LINE 上的 AI 小編，<br>會回文、會轉人工、有紀錄</h1>
+  <p class="lede">左邊是 demo：虛擬燈飾品牌 LUMEN 的 LINE 客服。點下面的問題試試——看它怎麼命中知識庫、什麼時候會轉人工，右邊後台會即時記錄。</p>
+</header>
+
+<div class="wrap cols">
+  <div class="phone">
+    <div class="phead">
+      <div class="avatar">L</div>
+      <div><b>LUMEN 燈飾</b><small>通常幾秒內回覆</small></div>
+      <div class="badge">AI 小編上線中</div>
+    </div>
+    <div class="chat" id="chat">
+      <div class="msg bot">Hi！我是 LUMEN 的 AI 小編 ✨<br>燈具選型、配送、保固都可以問我。<div class="meta">09:12</div></div>
+    </div>
+    <div class="quick">
+      <button onclick="ask('這盞燈適合多大空間？')">這盞燈適合多大空間？</button>
+      <button onclick="ask('保固几年？燈泡壞了怎麼辦？')">保固幾年？燈泡壞了怎麼辦？</button>
+      <button onclick="ask('你們有無光害的款嗎？')">你們有無光害的款嗎？</button>
+      <button onclick="ask('我想要那種工業風的復古燈')">我想要那種工業風的復古燈</button>
+      <button onclick="ask('上個月買的那單可以退貨嗎？')">上個月買的那單可以退貨嗎？</button>
+    </div>
+  </div>
+
+  <div class="side">
+    <h2>後台即時視圖</h2>
+    <div class="hint">每一則對話，後台都能看到：命中了哪條 FAQ、信心分數、有沒轉人工。</div>
+    <div class="stat">
+      <div><b>94%</b><span>AI 獨立回覆率</span></div>
+      <div><b>6%</b><span>轉人工比例</span></div>
+      <div><b>&lt;3 秒</b><span>平均首答時間</span></div>
+    </div>
+    <div class="pillrow">
+      <span class="pill hit">FAQ#12 空間選型</span>
+      <span class="pill hit">FAQ#07 保固條款</span>
+      <span class="pill human">已轉人工：退貨流程</span>
+      <span class="pill">知識庫 148 條</span>
+    </div>
+    <table>
+      <tr><th>時間</th><th>客戶問題</th><th>處理</th><th>信心分數</th></tr>
+      <tr><td>09:14</td><td>「這盞燈適合多大空間？」</td><td style="color:var(--ok)">FAQ 命中</td><td>0.97</td></tr>
+      <tr><td>09:21</td><td>「保固幾年？」</td><td style="color:var(--ok)">FAQ 命中</td><td>0.95</td></tr>
+      <tr><td>09:33</td><td>「退貨怎麼退？」</td><td style="color:var(--warn)">轉人工（需查訂單）</td><td>0.41</td></tr>
+      <tr><td>09:40</td><td>「發票可以開立嗎？」</td><td style="color:var(--ok)">FAQ 命中</td><td>0.92</td></tr>
+      <tr><td>09:52</td><td>「想訂做一盞客製的」</td><td style="color:var(--warn)">轉人工（超出知識庫）</td><td>0.28</td></tr>
+    </table>
+  </div>
+</div>
+
+<footer>
+  Demo 為展示用途，品牌與資料皆為虛構。<br>
+  實際交付包含：知識庫建置、轉人工邏輯、禁止事項、後台紀錄與交接文檔。
+</footer>
+
+<script>
+const replies = {
+  '這盞燈適合多大空間？': {text:'18W 那款建議 6–9 坪空間，色溫 3000K 最耐看；大空間建議加一盞或選 24W 版本。需要我寄選型表給您嗎？', faq:'FAQ#12 空間選型', score:'0.97', tag:'hit', tagText:'FAQ 命中'},
+  '保固几年？燈泡壞了怎麼辦？': {text:'整燈保固 2 年，燈泡 3 年。保固期內燈泡故障我們免費寄新的，您把舊燈泡寄回即可（運費我們出）。', faq:'FAQ#07 保固條款', score:'0.95', tag:'hit', tagText:'FAQ 命中'},
+  '你們有無光害的款嗎？': {text:'有的，「無頻閃」系列用恆流驅動，通過 CQC 無光害檢測，適合閱讀與兒童房。共 3 個款式，要我把連結傳給您嗎？', faq:'FAQ#23 無光害', score:'0.93', tag:'hit', tagText:'FAQ 命中'},
+  '我想要那種工業風的復古燈': {text:'工業風復古款目前有兩款：「鐵藝吊燈-黑」與「燈絲球泡-復古」。需要我寄型錄給您看看嗎？', faq:'FAQ#41 風格選型', score:'0.88', tag:'hit', tagText:'FAQ 命中'},
+  '上個月買的那單可以退貨嗎？': {text:'了解，退貨需要查您的訂單狀態，我已經轉給人工客服處理，稍後 5 分鐘內會有專人回覆您。', faq:'—', score:'0.41', tag:'human', tagText:'轉人工'}
+};
+const chat = document.getElementById('chat');
+function ts(){ const d=new Date(); return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+function addMsg(cls, html){ const d=document.createElement('div'); d.className='msg '+cls; d.innerHTML=html+'<div class="meta">'+ts()+'</div>'; chat.appendChild(d); chat.scrollTop=chat.scrollHeight; }
+function ask(q){
+  addMsg('user', q);
+  const typing=document.createElement('div'); typing.className='msg bot typing'; typing.innerHTML='<i></i><i></i><i></i>'; chat.appendChild(typing);
+  setTimeout(()=>{
+    const r = replies[q] || {text:'收到！這個問題我需要再確認一下，轉人工處理，稍後會回覆您。', faq:'—', score:'0.30', tag:'human', tagText:'轉人工'};
+    typing.remove();
+    addMsg('bot', r.text+'<div class="meta" style="color:var(--'+(r.tag==='hit'?'ok':'warn')+')">⚡ '+r.tagText+'｜'+r.faq+'｜信心 '+r.score+'</div>');
+  }, 900);
+}
+</script>
+
+
+<footer style="max-width:1080px;margin:48px auto 80px;padding:0 20px;text-align:center;font-family:inherit;">
+  <h2 style="margin:0 0 10px;font-size:24px;font-weight:800;color:#fff;">喜歡這個 demo？</h2>
+  <p style="color:#8b93a8;font-size:15px;line-height:1.7;max-width:600px;margin:0 auto;">
+    這是一支功能完整的展示 demo。需要針對你的業務做一版，或想聊自動化怎麼落地——歡迎直接找：
+  </p>
+  <a href="https://www.threads.net/@tj736990" target="_blank" rel="noopener"
+     style="display:inline-block;margin:18px 0 6px;padding:13px 32px;background:#7c6cff;color:#fff;font-size:16px;font-weight:700;border-radius:999px;text-decoration:none;">Threads DM @tj736990</a>
+  <div style="margin-top:14px;font-size:13px;color:#5b6478;">展示 demo：品牌與數據皆為虛擬資料，僅供功能演示</div>
+</footer>
+
+
+</body>
+</html>
